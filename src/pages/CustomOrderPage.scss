@@ -1,0 +1,99 @@
+@use "../styles/variables" as *;
+
+.custom-order {
+  padding: 48px 0 80px;
+
+  &__title {
+    margin-top: 8px;
+    font-size: clamp(28px, 4.4vw, 38px);
+    max-width: 520px;
+  }
+
+  &__lead {
+    margin-top: 14px;
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: $color-text-muted;
+  }
+
+  &__done {
+    padding: 40px 0;
+    max-width: 460px;
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: 28px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: $color-text-muted;
+      line-height: 1.6;
+    }
+  }
+
+  @media (min-width: 780px) {
+    padding: 72px 0 100px;
+  }
+}
+
+.custom-order-form {
+  margin-top: 30px;
+  max-width: 560px;
+  background: $color-cream-soft;
+  border: 1px solid $color-line;
+  border-radius: $radius-card;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+
+    input,
+    textarea {
+      font-family: $font-body;
+      font-size: 15px;
+      text-transform: none;
+      letter-spacing: normal;
+      color: $color-ink;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid $color-line;
+      padding: 8px 2px;
+      resize: none;
+
+      &:focus {
+        outline: none;
+        border-bottom-color: $color-burgundy;
+      }
+
+      &::placeholder {
+        color: rgba(44, 35, 32, 0.35);
+      }
+    }
+  }
+
+  &__error {
+    font-size: 13px;
+    color: $color-burgundy-dark;
+  }
+}

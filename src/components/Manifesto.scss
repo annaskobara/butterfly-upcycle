@@ -1,0 +1,63 @@
+@use "../styles/variables" as *;
+
+.manifesto {
+  padding: 48px 0;
+  border-top: 1px solid $color-line;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__title {
+    font-size: clamp(28px, 4.2vw, 40px);
+    line-height: 1.2;
+    max-width: 560px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 560px;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: $color-text-muted;
+  }
+
+  &__points {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px 32px;
+    max-width: 560px;
+
+    li {
+      position: relative;
+      padding-left: 16px;
+      font-size: 14.5px;
+      color: $color-ink;
+
+      &::before {
+        content: "·";
+        position: absolute;
+        left: 0;
+        color: $color-burgundy;
+        font-weight: 700;
+      }
+    }
+  }
+
+  @media (min-width: 640px) {
+    &__points {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 780px) {
+    padding: 72px 0;
+  }
+}

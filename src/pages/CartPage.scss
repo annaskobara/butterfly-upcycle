@@ -1,0 +1,175 @@
+@use "../styles/variables" as *;
+
+.cart-page {
+  padding: 40px 0 80px;
+
+  &__back {
+    background: none;
+    border: none;
+    padding: 0;
+    color: $color-text-muted;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 18px;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+
+  &__title {
+    margin-top: 6px;
+    font-size: clamp(26px, 4vw, 34px);
+  }
+
+  &__done {
+    padding: 40px 0;
+    max-width: 440px;
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: 28px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: $color-text-muted;
+      line-height: 1.6;
+    }
+  }
+
+  &__layout {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  &__total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $color-line;
+    font-size: 15px;
+
+    strong {
+      font-family: $font-display;
+      font-size: 19px;
+      color: $color-burgundy;
+    }
+  }
+
+  @media (min-width: 780px) {
+    padding: 64px 0 96px;
+
+    &__layout {
+      flex-direction: row;
+      gap: 48px;
+    }
+
+    &__items,
+    .cart-form {
+      flex: 1;
+    }
+  }
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid $color-line;
+
+  &__image {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    background: linear-gradient(150deg, #1c1315 0%, #6d1f2e 55%, #17222f 100%);
+  }
+
+  &__info {
+    flex: 1;
+
+    strong {
+      display: block;
+      font-size: 14.5px;
+      color: $color-ink;
+    }
+
+    span {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      color: $color-burgundy;
+      font-weight: 600;
+    }
+  }
+
+  &__remove {
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: 4px 8px;
+
+    &:hover {
+      color: $color-burgundy-dark;
+    }
+  }
+}
+
+.cart-form {
+  background: $color-cream-soft;
+  border: 1px solid $color-line;
+  border-radius: $radius-card;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: fit-content;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+
+    input,
+    textarea {
+      font-family: $font-body;
+      font-size: 15px;
+      text-transform: none;
+      letter-spacing: normal;
+      color: $color-ink;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid $color-line;
+      padding: 8px 2px;
+      resize: none;
+
+      &:focus {
+        outline: none;
+        border-bottom-color: $color-burgundy;
+      }
+
+      &::placeholder {
+        color: rgba(44, 35, 32, 0.35);
+      }
+    }
+  }
+
+  &__error {
+    font-size: 13px;
+    color: $color-burgundy-dark;
+  }
+}
