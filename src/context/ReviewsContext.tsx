@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { Review, ReviewInput } from "../types/product";
-import { adminHeaders, parseErrorMessage } from "./ProductsContext";
+import { API_URL, adminHeaders, parseErrorMessage } from "./ProductsContext";
 
 interface ReviewsContextValue {
   reviews: Review[];
@@ -23,7 +23,7 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/reviews");
+      const res = await fetch(`${API_URL}/api/reviews`);
       if (!res.ok) throw new Error("Не вдалося завантажити відгуки");
       setReviews((await res.json()) as Review[]);
     } catch (err) {
@@ -49,7 +49,7 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
         fd.append("text", input.text);
         if (image) fd.append("image", image);
 
-        const res = await fetch("/api/reviews", {
+        const res = await fetch(`${API_URL}/api/reviews`, {
           method: "POST",
           headers: adminHeaders(),
           body: fd,
@@ -62,7 +62,7 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
         return review;
       },
       deleteReview: async (id) => {
-        const res = await fetch(`/api/reviews/${id}`, {
+        const res = await fetch(`${API_URL}/api/reviews/${id}`, {
           method: "DELETE",
           headers: adminHeaders(),
         });

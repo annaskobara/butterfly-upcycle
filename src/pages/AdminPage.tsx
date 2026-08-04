@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { useProducts, ADMIN_AUTH_KEY } from "../context/ProductsContext";
+import { useProducts, ADMIN_AUTH_KEY, API_URL } from "../context/ProductsContext";
 import { useOrders } from "../context/OrdersContext";
 import { useReviews } from "../context/ReviewsContext";
 import type { Product, ProductInput, SwatchKey, OrderStatus } from "../types/product";
 import "./AdminPage.scss";
-
-// NOTE: the real password check happens on the backend (server/index.js,
-// ADMIN_PASSWORD env var / default). This page just asks for it and stores
-// it in sessionStorage to send along with add/edit/delete requests — it is
-// not a replacement for real authentication.
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   new: "Нове",
   confirmed: "Підтверджено",
   done: "Виконано",
 };
+
+function getImageUrl(url: string) {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
+    return url;
+  }
+  return `${API_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+}
 
 function makeEmptyForm(defaultCategory: string): ProductInput {
   return {
@@ -45,7 +48,7 @@ function LoginGate({ onSuccess }: { onSuccess: () => void }) {
     setChecking(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/verify", {
+      const res = await fetch(`${API_URL}/api/admin/verify`, {
         method: "POST",
         headers: { "x-admin-password": password },
       });
@@ -118,12 +121,10 @@ function ProductsTab() {
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  // Keep the default category in sync once categories load for the first time.
   useEffect(() => {
     if (!editingId && !form.category && categories.length > 0) {
       setForm((prev) => ({ ...prev, category: categories[0] }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories]);
 
   useEffect(() => {
@@ -138,7 +139,6 @@ function ProductsTab() {
         if (p.file) URL.revokeObjectURL(p.url);
       });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const update = <K extends keyof ProductInput>(field: K, value: ProductInput[K]) => {
@@ -391,8 +391,7 @@ function ProductsTab() {
           </label>
           {imagePreviews.length > 1 && (
             <p className="admin-form__note">
-              Перше фото — обкладинка картки товару. Стрілками можна змінити
-              порядок.
+              Перше фото — обкладинка картки товару. Стрілками можна змінити порядок.
             </p>
           )}
 
@@ -400,7 +399,7 @@ function ProductsTab() {
             <div className="admin-form__previews">
               {imagePreviews.map((p, i) => (
                 <div className="admin-form__preview" key={p.url + i}>
-                  <img src={p.url} alt="" />
+                  <img src={getImageUrl(p.url)} alt="" />
                   <button
                     type="button"
                     className="admin-form__preview-remove"
@@ -636,7 +635,6 @@ function OrdersTab() {
 
   useEffect(() => {
     fetchOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -871,7 +869,7 @@ function ReviewsTab() {
           {reviews.map((review) => (
             <li key={review.id} className="admin-list__item admin-reviews__item">
               {review.image && (
-                <img className="admin-reviews__thumb" src={review.image} alt="" />
+                <img className="admin-reviews__thumb" src={getImageUrl(review.image)} alt="" />
               )}
               <div>
                 <strong>{review.name}</strong>

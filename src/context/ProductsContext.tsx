@@ -2,6 +2,7 @@ import { createContext, useContext, useCallback, useEffect, useMemo, useState } 
 import type { ReactNode } from "react";
 import type { Product, ProductInput } from "../types/product";
 
+export const API_URL = import.meta.env.VITE_API_URL || "";
 export const ADMIN_AUTH_KEY = "butterfly-upcycle:admin-password";
 
 function buildFormData(input: ProductInput, newImages: File[]): FormData {
@@ -67,8 +68,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const [productsRes, categoriesRes] = await Promise.all([
-        fetch("/api/products"),
-        fetch("/api/categories"),
+        fetch(`${API_URL}/api/products`),
+        fetch(`${API_URL}/api/categories`),
       ]);
       if (!productsRes.ok) throw new Error("Не вдалося завантажити товари з сервера");
       if (!categoriesRes.ok) throw new Error("Не вдалося завантажити категорії з сервера");
@@ -97,7 +98,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       refresh,
       categories,
       addProduct: async (input, newImages) => {
-        const res = await fetch("/api/products", {
+        const res = await fetch(`${API_URL}/api/products`, {
           method: "POST",
           headers: adminHeaders(),
           body: buildFormData(input, newImages),
@@ -110,7 +111,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         return product;
       },
       updateProduct: async (id, input, newImages) => {
-        const res = await fetch(`/api/products/${id}`, {
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
           method: "PUT",
           headers: adminHeaders(),
           body: buildFormData(input, newImages),
@@ -123,7 +124,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         return product;
       },
       deleteProduct: async (id) => {
-        const res = await fetch(`/api/products/${id}`, {
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
           method: "DELETE",
           headers: adminHeaders(),
         });
@@ -134,7 +135,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       },
       getProduct: (id) => products.find((p) => p.id === id),
       addCategory: async (name) => {
-        const res = await fetch("/api/categories", {
+        const res = await fetch(`${API_URL}/api/categories`, {
           method: "POST",
           headers: { ...adminHeaders(), "content-type": "application/json" },
           body: JSON.stringify({ name }),
@@ -145,7 +146,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         setCategories((await res.json()) as string[]);
       },
       deleteCategory: async (name) => {
-        const res = await fetch(`/api/categories/${encodeURIComponent(name)}`, {
+        const res = await fetch(`${API_URL}/api/categories/${encodeURIComponent(name)}`, {
           method: "DELETE",
           headers: adminHeaders(),
         });

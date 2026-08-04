@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import type { Order, OrderCreateInput, OrderStatus } from "../types/product";
 import { adminHeaders, parseErrorMessage } from "./ProductsContext";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 interface OrdersContextValue {
   orders: Order[];
   loading: boolean;
@@ -24,7 +26,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/orders", { headers: adminHeaders() });
+      const res = await fetch(`${API_URL}/api/orders`, { headers: adminHeaders() });
       if (!res.ok) {
         throw new Error(await parseErrorMessage(res, "Не вдалося завантажити замовлення"));
       }
@@ -43,7 +45,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       error,
       fetchOrders,
       placeOrder: async (input) => {
-        const res = await fetch("/api/orders", {
+        const res = await fetch(`${API_URL}/api/orders`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(input),
@@ -54,7 +56,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         return (await res.json()) as Order;
       },
       setOrderStatus: async (id, status) => {
-        const res = await fetch(`/api/orders/${id}`, {
+        const res = await fetch(`${API_URL}/api/orders/${id}`, {
           method: "PATCH",
           headers: { ...adminHeaders(), "content-type": "application/json" },
           body: JSON.stringify({ status }),
@@ -66,7 +68,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)));
       },
       deleteOrder: async (id) => {
-        const res = await fetch(`/api/orders/${id}`, {
+        const res = await fetch(`${API_URL}/api/orders/${id}`, {
           method: "DELETE",
           headers: adminHeaders(),
         });
