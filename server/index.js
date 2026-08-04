@@ -34,7 +34,11 @@ const PORT = process.env.PORT || 4000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "butterfly2026";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "x-admin-password"],
+}));
 app.use(express.json());
 app.use("/uploads", express.static(UPLOADS_DIR));
 
