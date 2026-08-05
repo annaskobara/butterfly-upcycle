@@ -1,162 +1,43 @@
-# butterfly upcycle
+# 🦋 butterfly upcycle
 
-Сайт-візитка для бренду дизайнерського апсайклінг-одягу "butterfly upcycle"
-(Дніпро). React + TypeScript + SCSS на фронтенді, Node.js/Express — на
-бекенді. Товари, категорії, фото, відгуки й замовлення зберігаються на
-сервері й бачать їх усі відвідувачі сайту, а не лише ваш браузер.
+A modern full-stack web application and online store built for the designer upcycled clothing brand "butterfly upcycle" (Dnipro, Ukraine). This project demonstrates modern UI layout, custom React components, dynamic backend integrations, and persistent state management.
 
-## Швидкий старт (потрібні два термінали)
+## 🔗 Live Demo
+* **Frontend (Vercel):** https://butterfly-upcycle.vercel.app
+* **Backend API (Render):** https://butterfly-upcycle-api.onrender.com
 
-**1. Бекенд:**
+## 📝 Description
+This is a full-stack Single Page Application (SPA) designed to showcase upcycled fashion items, manage customer requests, and process custom orders. The platform features dynamic data fetching where products, categories, customer reviews, and incoming orders are synced with the backend server and updated in real time for all visitors.
 
-```bash
-cd server
-npm install
-npm start
-```
+## 🛠 Technologies
+* **Frontend:** React 18, TypeScript, SCSS (BEM methodology, modular architecture), React Router DOM (v6).
+* **Backend:** Node.js, Express, Multer (file & image upload handling), JSON-based file storage (`db.json`).
+* **Deployment & Tooling:** Vite, Vercel (SPA routing), Render (Node.js Web Service), Git.
 
-Підніметься на http://localhost:4000. При першому запуску сам створить
-`server/db.json` із прикладами товарів, категорій і відгуків.
+## 🎯 Key Features
+* **Dynamic Product Catalog & Filtering:** Fluid category selection, in-stock status toggle, and detailed product cards with ecological impact stats (water saved, fabric salvaged, CO₂ reduced).
+* **Interactive Shopping Cart:** Persistent cart state using `localStorage` with Nova Poshta delivery checkout integration.
+* **Custom Order System:** Dedicated workflow (`/custom-order`) allowing clients to request unique upcycled pieces or order variations of sold-out items.
+* **Secured Admin Panel:** Password-protected dashboard (`/admin`) for full CRUD management:
+  * **Products:** Add, edit, remove, reorder item gallery photos, and configure eco-metrics.
+  * **Categories:** Manage product categories dynamically.
+  * **Orders:** Track purchases and custom requests with real-time status updates (*New*, *Confirmed*, *Done*).
+  * **Reviews:** Moderate and publish customer feedback with optional screenshot attachments.
+* **SPA Routing & Production Ready:** Optimized routing fallback (`vercel.json`) to support direct page reloads across all routes without 404 errors.
 
-**2. Фронтенд:**
+## ▶️ How to run locally
 
-```bash
-npm install
-npm run dev
-```
+### 1. Backend setup
+* **Navigate into the server folder:** `cd server`
+* **Install dependencies:** `npm install`
+* **Start the server:** `npm start` *(runs on http://localhost:4000)*
 
-Відкриється на http://localhost:5173 — запити `/api/...` і `/uploads/...`
-автоматично проксуються на бекенд (див. `vite.config.ts`).
+### 2. Frontend setup
+* **Open a second terminal in the root directory:** `npm install`
+* **Run the development server:** `npm run dev` *(runs on http://localhost:5173)*
 
-## Сторінки
-
-- `/` — головна: коротке знайомство з брендом (фото + текст "про себе"),
-  манифест, карусель товарів (по 3, стрілками гортаються наступні),
-  процес пошиття, відгуки клієнтів
-- `/catalog` — каталог усіх товарів: фільтр за категорією + перемикач
-  "лише в наявності"
-- `/catalog/:id` — картка товару: галерея фото, точна ціна, наявність,
-  тканина/розмір, анімована екостатистика, кнопка "Додати в кошик"
-  (для наявних) або "Замовити схоже" (для проданих)
-- `/cart` — кошик: список доданих товарів + форма оформлення (ім'я,
-  телефон, Telegram/Instagram, місто й відділення Нової Пошти).
-  Після відправки всі товари в кошику автоматично позначаються як
-  продані, а замовлення з'являється в адмін-панелі
-- `/custom-order` — заявка на **індивідуальне** замовлення (опис бажаної
-  речі, орієнтовний бюджет, контакти) — теж потрапляє в адмін-панель.
-  Кнопка "Замовити схоже" на проданому товарі веде сюди з підказкою,
-  на яку річ орієнтуватися
-- `/admin` — адмін-панель із чотирма вкладками: Товари, Категорії,
-  Замовлення, Відгуки
-
-Бейдж на проданому товарі — "Продано · можливий повтор": така річ
-унікальна, але подібну можна пошити знову через `/custom-order`.
-
-## Кошик
-
-Кошик зберігається в браузері відвідувача (localStorage) — це особисті,
-тимчасові дані конкретного покупця до моменту оформлення замовлення, а
-не спільна інформація сайту, тому окремого місця на сервері для нього
-не потрібно. Іконка кошика в шапці сайту показує кількість доданих
-товарів.
-
-## Адмін-панель
-
-Зайдіть на `/admin` і введіть пароль (перевіряється на сервері).
-За замовчуванням: `butterfly2026`.
-
-**Обов'язково змініть пароль перед публічним запуском** — через
-`ADMIN_PASSWORD` у `server/.env` (приклад у `server/.env.example`):
-
-```
+## 🔐 Environment Variables
+To customize backend options locally or in deployment, create a `.env` file inside the `server/` directory:
+```env
 PORT=4000
-ADMIN_PASSWORD=ваш-новий-пароль
-```
-
-### Вкладка "Товари"
-
-Назва, категорія (обрати наявну або одразу додати нову прямо у формі),
-точна ціна, наявність, короткий і детальний опис, тканина, розмір,
-кілька фото — із завантаженням, видаленням і **зміною порядку** (перше
-фото стає обкладинкою картки товару), і екопоказники (вода/тканина/CO₂ —
-довільні числа на ваш розсуд, залиште 0 щоб не показувати).
-
-### Вкладка "Категорії"
-
-Список категорій із кількістю товарів у кожній, додавання, видалення.
-
-### Вкладка "Замовлення"
-
-Усі заявки — і покупки наявних речей (з кошика чи "Додати в кошик"), і
-індивідуальні запити (`/custom-order`) — з фільтром за статусом (Усі /
-Нове / Підтверджено / Виконано). Кожне замовлення показує список
-товарів (або опис бажаної речі), контакти, доставку, коментар і дату.
-Статус можна міняти, заявку — видалити після обробки.
-
-### Вкладка "Відгуки"
-
-Додавання й видалення відгуків клієнтів, які одразу зʼявляються в
-блоці "Відгуки" на головній сторінці. Відгук — це, перш за все, текст
-(ім'я + сам відгук), але за бажання можна додати фото або скріншот
-переписки — воно з'явиться над цитатою на сайті.
-
-## Як порахувати екопоказники
-
-Це довільні числа, які ви вводите самі (наприклад, орієнтуючись на
-публічні дані про виробництво тканин). Якщо не хочете показувати
-якийсь показник — залиште 0.
-
-## Збірка та розгортання
-
-```bash
-npm run build       # фронтенд → dist/
-npm run preview
-```
-
-```bash
-cd server
-npm start           # бекенд, окремий процес
-```
-
-Це два окремі застосунки: статичний фронтенд (можна хостити на
-Netlify/Vercel/GitHub Pages) і Node-бекенд (потрібен хостинг, що виконує
-Node — наприклад Render, Railway, Fly.io, VPS). На проді:
-
-1. Розгорніть `server/` на Node-хостингу, задайте `ADMIN_PASSWORD` і,
-   за потреби, `PORT` через змінні середовища хостингу.
-2. У фронтенді замініть проксі-налаштування (`vite.config.ts` працює
-   лише в dev-режимі) на реальний URL бекенду — простіше за все
-   налаштувати reverse proxy/rewrite на хостингу фронтенду так, щоб
-   `/api/*` і `/uploads/*` йшли на бекенд.
-3. Це SPA з клієнтським роутингом — переконайтесь, що хостинг фронтенду
-   налаштований на "SPA fallback" (усі шляхи → `index.html`), інакше
-   пряме відкриття `/catalog` чи `/admin` за посиланням поверне 404.
-
-## Структура
-
-```
-src/
-  components/     # Header (з кошиком), Hero, Manifesto, Categories (карусель),
-                  # ProductCard, AnimatedNumber, Process, Reviews, Footer, ScrollToHash
-  context/        # ProductsContext (товари + категорії), OrdersContext,
-                  # ReviewsContext, CartContext (localStorage)
-  pages/          # HomePage, CatalogPage, ProductPage, CartPage,
-                  # CustomOrderPage, AdminPage
-  types/          # Product, Order, Review
-  styles/         # variables.scss, global.scss
-
-server/
-  index.js        # Express API: products, categories, orders, reviews, admin/verify
-  db.js           # проста JSON-файлова "база даних" (server/db.json)
-  seedProducts.js # початкові товари, категорії й відгуки для першого запуску
-  uploads/        # завантажені фото товарів (роздаються як /uploads/...)
-```
-
-## Що можна доробити
-
-- Оновити посилання на Instagram/Telegram у `src/components/Footer.tsx`
-  (зараз там приклад `butterfly_upcyclex`).
-- Перейти з JSON-файлу на "справжню" базу даних (Postgres/SQLite/Supabase),
-  якщо товарів чи замовлень стане багато.
-- Додати email/Telegram-сповіщення адміну при новому замовленні (зараз
-  заявки потрібно перевіряти вручну у вкладці "Замовлення").
+ADMIN_PASSWORD=your_custom_admin_password
