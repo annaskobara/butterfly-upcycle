@@ -1,0 +1,87 @@
+@use "../styles/variables" as *;
+
+.reviews {
+  padding: 48px 0;
+  border-top: 1px solid $color-line;
+
+  &__title {
+    margin-top: 6px;
+    font-size: clamp(26px, 4vw, 34px);
+  }
+
+  &__status {
+    margin-top: 24px;
+    color: $color-text-muted;
+    font-size: 14.5px;
+  }
+
+  &__grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  @media (min-width: 640px) {
+    &__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 780px) {
+    padding: 72px 0;
+  }
+
+  @media (min-width: 1024px) {
+    &__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.review-card {
+  margin: 0;
+  background: $color-cream-soft;
+  border: 1px solid $color-line;
+  border-radius: $radius-card;
+  padding: 22px;
+
+  &__image {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: $color-ink;
+
+    &::before {
+      content: "“";
+      font-family: $font-display;
+      color: $color-burgundy;
+    }
+
+    &::after {
+      content: "”";
+      font-family: $font-display;
+      color: $color-burgundy;
+    }
+  }
+
+  figcaption {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $color-text-muted;
+
+    &::before {
+      content: "— ";
+    }
+  }
+}

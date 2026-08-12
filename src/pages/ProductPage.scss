@@ -1,0 +1,232 @@
+@use "../styles/variables" as *;
+
+.product-page {
+  padding: 40px 0 72px;
+
+  &__back {
+    background: none;
+    border: none;
+    padding: 0;
+    color: $color-text-muted;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+
+  &__status {
+    padding: 40px 0;
+    color: $color-text-muted;
+    font-size: 14.5px;
+  }
+
+  &__missing {
+    padding: 40px 0;
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: 28px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: $color-text-muted;
+    }
+  }
+
+  &__layout {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  &__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__image {
+    position: relative;
+    height: 340px;
+    border-radius: $radius-card;
+    box-shadow: 0 24px 48px -28px rgba(32, 26, 23, 0.4);
+  }
+
+  &__badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    width: fit-content;
+    background: rgba(32, 26, 23, 0.82);
+    color: $color-cream-soft;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: $radius-pill;
+  }
+
+  &__thumbs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+
+  &__thumb {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-color: $color-cream-soft;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &--active {
+      opacity: 1;
+      border-color: $color-burgundy;
+    }
+  }
+
+  &__info {
+    h1 {
+      margin-top: 6px;
+      font-size: clamp(28px, 4.4vw, 38px);
+      line-height: 1.2;
+    }
+  }
+
+  &__price {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: $color-burgundy;
+  }
+
+  &__description {
+    margin-top: 16px;
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: $color-text-muted;
+  }
+
+  &__meta {
+    margin: 22px 0 0;
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-top: 1px solid $color-line;
+      font-size: 13.5px;
+    }
+
+    dt {
+      color: $color-text-muted;
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+      color: $color-ink;
+      text-align: right;
+    }
+  }
+
+  &__impact {
+    margin: 24px 0 0;
+    padding-top: 20px;
+    border-top: 1px dashed $color-line;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 24px;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    dt {
+      font-family: $font-display;
+      font-size: 19px;
+      color: $color-ink;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      color: $color-text-muted;
+      max-width: 110px;
+      line-height: 1.35;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  @media (min-width: 640px) {
+    &__layout {
+      flex-direction: row;
+      gap: 36px;
+      align-items: flex-start;
+    }
+
+    &__gallery {
+      flex: 1;
+      position: sticky;
+      top: 84px;
+      min-width: 0;
+    }
+
+    &__image {
+      height: 380px;
+    }
+
+    &__info {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    padding: 64px 0 96px;
+
+    &__layout {
+      gap: 48px;
+    }
+
+    &__gallery {
+      top: 96px;
+    }
+
+    &__image {
+      height: 460px;
+    }
+  }
+}

@@ -1,0 +1,57 @@
+@use "../styles/variables" as *;
+
+.footer {
+  border-top: 1px solid $color-line;
+  padding: 32px 0 40px;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: $font-display;
+    font-size: 17px;
+    color: $color-ink;
+  }
+
+  &__logo-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid $color-line;
+  }
+
+  &__meta {
+    font-size: 13px;
+    color: $color-text-muted;
+  }
+
+  &__links {
+    display: flex;
+    gap: 18px;
+    font-size: 13.5px;
+
+    a {
+      text-decoration: none;
+      color: $color-ink;
+
+      &:hover {
+        color: $color-burgundy;
+      }
+    }
+  }
+
+  @media (min-width: 780px) {
+    &__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}

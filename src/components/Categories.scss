@@ -1,0 +1,110 @@
+@use "../styles/variables" as *;
+
+.categories {
+  padding: 48px 0;
+  border-top: 1px solid $color-line;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  &__title {
+    margin-top: 6px;
+    font-size: clamp(26px, 4vw, 34px);
+  }
+
+  &__subtitle {
+    margin-top: 12px;
+    max-width: 480px;
+    font-size: 14.5px;
+    color: $color-text-muted;
+    line-height: 1.6;
+  }
+
+  &__empty {
+    margin-top: 30px;
+    font-size: 14px;
+    color: $color-text-muted;
+    line-height: 1.6;
+    max-width: 440px;
+  }
+
+  &__cta {
+    flex-shrink: 0;
+  }
+
+  &__grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 26px;
+
+    button {
+      background: none;
+      border: 1px solid $color-line;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 15px;
+      color: $color-ink;
+      cursor: pointer;
+      flex-shrink: 0;
+
+      &:hover {
+        border-color: $color-burgundy;
+        color: $color-burgundy;
+      }
+    }
+  }
+
+  &__dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__dot {
+    width: 8px !important;
+    height: 8px !important;
+    padding: 0;
+    border-radius: 50%;
+    border: none !important;
+    background: $color-line;
+
+    &--active {
+      background: $color-burgundy;
+    }
+  }
+
+  @media (min-width: 640px) {
+    &__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 780px) {
+    padding: 72px 0;
+
+    &__header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}

@@ -1,0 +1,100 @@
+@use "../styles/variables" as *;
+
+.product-card {
+  display: block;
+  background: $color-cream-soft;
+  border: 1px solid $color-line;
+  border-radius: $radius-card;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -26px rgba(32, 26, 23, 0.4);
+  }
+
+  &--sold {
+    .product-card__image {
+      filter: grayscale(0.3) brightness(0.75);
+    }
+  }
+
+  &__image {
+    height: 260px;
+    position: relative;
+  }
+
+  &__badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    background: rgba(32, 26, 23, 0.82);
+    color: $color-cream-soft;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: $radius-pill;
+    width: fit-content;
+  }
+
+  &__body {
+    padding: 18px 20px 22px;
+  }
+
+  &__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+
+    h3 {
+      font-size: 18px;
+      font-family: $font-display;
+      color: $color-ink;
+    }
+  }
+
+  &__price {
+    flex-shrink: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: $color-burgundy;
+  }
+
+  p {
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: $color-text-muted;
+  }
+
+  &__cart-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 10px;
+    border-radius: $radius-pill;
+    border: 1px solid $color-line;
+    background: transparent;
+    color: $color-ink;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+
+    &:hover {
+      border-color: $color-burgundy;
+      color: $color-burgundy;
+    }
+
+    &--added {
+      border-color: $color-burgundy;
+      color: $color-burgundy;
+      cursor: default;
+    }
+  }
+}

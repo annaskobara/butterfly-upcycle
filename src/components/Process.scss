@@ -1,0 +1,64 @@
+@use "../styles/variables" as *;
+
+.process {
+  background: $color-ink;
+  color: $color-cream-soft;
+  padding: 56px 0;
+
+  &__title {
+    margin-top: 10px;
+    color: $color-cream-soft;
+    font-size: clamp(26px, 4.4vw, 38px);
+    line-height: 1.25;
+    max-width: 620px;
+  }
+
+  &__accent {
+    font-style: italic;
+    color: #d68a5c;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 26px 0;
+    border-top: 1px solid $color-line-dark;
+
+    &:last-child {
+      border-bottom: 1px solid $color-line-dark;
+    }
+
+    h3 {
+      color: $color-cream-soft;
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: rgba(242, 233, 221, 0.62);
+      font-size: 14.5px;
+      line-height: 1.6;
+      max-width: 480px;
+    }
+  }
+
+  &__number {
+    font-family: $font-display;
+    font-style: italic;
+    font-size: 20px;
+    color: #d68a5c;
+  }
+
+  @media (min-width: 780px) {
+    padding: 88px 0;
+  }
+}
