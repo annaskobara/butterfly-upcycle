@@ -4,6 +4,13 @@ import type { Product, ProductInput } from "../types/product";
 
 export const ADMIN_AUTH_KEY = "butterfly-upcycle:admin-password";
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+
+export function getApiUrl(path: string): string {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${cleanPath}`;
+}
+
 function buildFormData(input: ProductInput, newImages: File[]): FormData {
   const fd = new FormData();
   fd.append("title", input.title);
@@ -67,8 +74,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const [productsRes, categoriesRes] = await Promise.all([
-        fetch("/api/products"),
-        fetch("/api/categories"),
+        fetch(getApiUrl("/api/products")),
+        fetch(getApiUrl("/api/categories")),
       ]);
       if (!productsRes.ok) throw new Error("Не вдалося завантажити товари з сервера");
       if (!categoriesRes.ok) throw new Error("Не вдалося завантажити категорії з сервера");
@@ -89,6 +96,72 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     refresh();
   }, [refresh]);
 
+  const addProduct = useCallback(async (input: ProductInput, newImages: File[]): Promise<Product> => {
+    const res = await fetch(getApiUrl("/api/products"), {
+      method: "POST",
+      headers: adminHeaders(),
+      body: buildFormData(input, newImages),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося додати товар"));
+    }
+    const product = (await res.json()) as Product;
+    setProducts((prev) => [product, ...prev]);
+    return product;
+  }, []);
+
+  const updateProduct = useCallback(async (id: string, input: ProductInput, newImages: File[]): Promise<Product> => {
+    const res = await fetch(getApiUrl(`/api/products/${id}`), {
+      method: "PUT",
+      headers: adminHeaders(),
+      body: buildFormData(input, newImages),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося зберегти зміни"));
+    }
+    const product = (await res.json()) as Product;
+    setProducts((prev) => prev.map((p) => (p.id === id ? product : p)));
+    return product;
+  }, []);
+
+  const deleteProduct = useCallback(async (id: string): Promise<void> => {
+    const res = await fetch(getApiUrl(`/api/products/${id}`), {
+      method: "DELETE",
+      headers: adminHeaders(),
+    });
+    if (!res.ok && res.status !== 204) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося видалити товар"));
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
+  const getProduct = useCallback((id: string) => {
+    return products.find((p) => p.id === id);
+  }, [products]);
+
+  const addCategory = useCallback(async (name: string): Promise<void> => {
+    const res = await fetch(getApiUrl("/api/categories"), {
+      method: "POST",
+      headers: { ...adminHeaders(), "content-type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося додати категорію"));
+    }
+    setCategories((await res.json()) as string[]);
+  }, []);
+
+  const deleteCategory = useCallback(async (name: string): Promise<void> => {
+    const res = await fetch(getApiUrl(`/api/categories/${encodeURIComponent(name)}`), {
+      method: "DELETE",
+      headers: adminHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося видалити категорію"));
+    }
+    setCategories((await res.json()) as string[]);
+  }, []);
+
   const value = useMemo<ProductsContextValue>(
     () => ({
       products,
@@ -96,66 +169,26 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       error,
       refresh,
       categories,
-      addProduct: async (input, newImages) => {
-        const res = await fetch("/api/products", {
-          method: "POST",
-          headers: adminHeaders(),
-          body: buildFormData(input, newImages),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося додати товар"));
-        }
-        const product = (await res.json()) as Product;
-        setProducts((prev) => [product, ...prev]);
-        return product;
-      },
-      updateProduct: async (id, input, newImages) => {
-        const res = await fetch(`/api/products/${id}`, {
-          method: "PUT",
-          headers: adminHeaders(),
-          body: buildFormData(input, newImages),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося зберегти зміни"));
-        }
-        const product = (await res.json()) as Product;
-        setProducts((prev) => prev.map((p) => (p.id === id ? product : p)));
-        return product;
-      },
-      deleteProduct: async (id) => {
-        const res = await fetch(`/api/products/${id}`, {
-          method: "DELETE",
-          headers: adminHeaders(),
-        });
-        if (!res.ok && res.status !== 204) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося видалити товар"));
-        }
-        setProducts((prev) => prev.filter((p) => p.id !== id));
-      },
-      getProduct: (id) => products.find((p) => p.id === id),
-      addCategory: async (name) => {
-        const res = await fetch("/api/categories", {
-          method: "POST",
-          headers: { ...adminHeaders(), "content-type": "application/json" },
-          body: JSON.stringify({ name }),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося додати категорію"));
-        }
-        setCategories((await res.json()) as string[]);
-      },
-      deleteCategory: async (name) => {
-        const res = await fetch(`/api/categories/${encodeURIComponent(name)}`, {
-          method: "DELETE",
-          headers: adminHeaders(),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося видалити категорію"));
-        }
-        setCategories((await res.json()) as string[]);
-      },
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      getProduct,
+      addCategory,
+      deleteCategory,
     }),
-    [products, categories, loading, error, refresh]
+    [
+      products,
+      categories,
+      loading,
+      error,
+      refresh,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      getProduct,
+      addCategory,
+      deleteCategory,
+    ]
   );
 
   return (

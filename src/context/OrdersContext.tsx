@@ -2,6 +2,7 @@ import { createContext, useContext, useCallback, useMemo, useState } from "react
 import type { ReactNode } from "react";
 import type { Order, OrderCreateInput, OrderStatus } from "../types/product";
 import { adminHeaders, parseErrorMessage } from "./ProductsContext";
+import { getApiUrl } from "../utils/api";
 
 interface OrdersContextValue {
   orders: Order[];
@@ -24,16 +25,55 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/orders", { headers: adminHeaders() });
+      const res = await fetch(getApiUrl("/api/orders"), { headers: adminHeaders() });
       if (!res.ok) {
         throw new Error(await parseErrorMessage(res, "Не вдалося завантажити замовлення"));
       }
-      setOrders((await res.json()) as Order[]);
+      const data = (await res.json()) as Order[];
+      setOrders(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не вдалося завантажити замовлення");
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const placeOrder = useCallback(async (input: OrderCreateInput): Promise<Order> => {
+    const res = await fetch(getApiUrl("/api/orders"), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося надіслати замовлення"));
+    }
+    const createdOrder = (await res.json()) as Order;
+    setOrders((prev) => [createdOrder, ...prev]);
+    return createdOrder;
+  }, []);
+
+  const setOrderStatus = useCallback(async (id: string, status: OrderStatus) => {
+    const res = await fetch(getApiUrl(`/api/orders/${id}`), {
+      method: "PATCH",
+      headers: { ...adminHeaders(), "content-type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося оновити статус"));
+    }
+    const updated = (await res.json()) as Order;
+    setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)));
+  }, []);
+
+  const deleteOrder = useCallback(async (id: string) => {
+    const res = await fetch(getApiUrl(`/api/orders/${id}`), {
+      method: "DELETE",
+      headers: adminHeaders(),
+    });
+    if (!res.ok && res.status !== 204) {
+      throw new Error(await parseErrorMessage(res, "Не вдалося видалити замовлення"));
+    }
+    setOrders((prev) => prev.filter((o) => o.id !== id));
   }, []);
 
   const value = useMemo<OrdersContextValue>(
@@ -42,41 +82,11 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       fetchOrders,
-      placeOrder: async (input) => {
-        const res = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(input),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося надіслати замовлення"));
-        }
-        return (await res.json()) as Order;
-      },
-      setOrderStatus: async (id, status) => {
-        const res = await fetch(`/api/orders/${id}`, {
-          method: "PATCH",
-          headers: { ...adminHeaders(), "content-type": "application/json" },
-          body: JSON.stringify({ status }),
-        });
-        if (!res.ok) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося оновити статус"));
-        }
-        const updated = (await res.json()) as Order;
-        setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)));
-      },
-      deleteOrder: async (id) => {
-        const res = await fetch(`/api/orders/${id}`, {
-          method: "DELETE",
-          headers: adminHeaders(),
-        });
-        if (!res.ok && res.status !== 204) {
-          throw new Error(await parseErrorMessage(res, "Не вдалося видалити замовлення"));
-        }
-        setOrders((prev) => prev.filter((o) => o.id !== id));
-      },
+      placeOrder,
+      setOrderStatus,
+      deleteOrder,
     }),
-    [orders, loading, error, fetchOrders]
+    [orders, loading, error, fetchOrders, placeOrder, setOrderStatus, deleteOrder]
   );
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;

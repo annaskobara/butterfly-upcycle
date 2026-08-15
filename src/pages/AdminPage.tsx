@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { useProducts, ADMIN_AUTH_KEY, adminHeaders } from "../context/ProductsContext";
+import { useProducts, ADMIN_AUTH_KEY } from "../context/ProductsContext";
 import { useOrders } from "../context/OrdersContext";
 import { useReviews } from "../context/ReviewsContext";
 import type { Product, ProductInput, SwatchKey, OrderStatus } from "../types/product";
+import { getApiUrl, getImageUrl } from "../utils/api";
 import "./AdminPage.scss";
-
-// NOTE: the real password check happens on the backend (server/index.js,
-// ADMIN_PASSWORD env var / default). This page just asks for it and stores
-// it in sessionStorage to send along with add/edit/delete requests — it is
-// not a replacement for real authentication.
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   new: "Нове",
@@ -45,7 +41,7 @@ function LoginGate({ onSuccess }: { onSuccess: () => void }) {
     setChecking(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/verify", {
+      const res = await fetch(getApiUrl("/api/admin/verify"), {
         method: "POST",
         headers: { "x-admin-password": password },
       });
@@ -118,13 +114,11 @@ function ProductsTab() {
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  // Keep the default category in sync once categories load for the first time.
   useEffect(() => {
     if (!editingId && !form.category && categories.length > 0) {
       setForm((prev) => ({ ...prev, category: categories[0] }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories]);
+  }, [categories, editingId, form.category]);
 
   useEffect(() => {
     if (!savedMessage) return;
@@ -138,8 +132,7 @@ function ProductsTab() {
         if (p.file) URL.revokeObjectURL(p.url);
       });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [imagePreviews]);
 
   const update = <K extends keyof ProductInput>(field: K, value: ProductInput[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -391,8 +384,7 @@ function ProductsTab() {
           </label>
           {imagePreviews.length > 1 && (
             <p className="admin-form__note">
-              Перше фото — обкладинка картки товару. Стрілками можна змінити
-              порядок.
+              Перше фото — обкладинка картки товару. Стрілками можна змінити порядок.
             </p>
           )}
 
@@ -400,7 +392,7 @@ function ProductsTab() {
             <div className="admin-form__previews">
               {imagePreviews.map((p, i) => (
                 <div className="admin-form__preview" key={p.url + i}>
-                  <img src={p.url} alt="" />
+                  <img src={getImageUrl(p.url)} alt="" />
                   <button
                     type="button"
                     className="admin-form__preview-remove"
@@ -633,16 +625,10 @@ const STATUS_FILTER_ALL = "Усі";
 function OrdersTab() {
   const { orders, loading, error, fetchOrders, setOrderStatus, deleteOrder } = useOrders();
   const [statusFilter, setStatusFilter] = useState<string>(STATUS_FILTER_ALL);
-  const [telegramConfigured, setTelegramConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetchOrders();
-    fetch("/api/admin/telegram-status", { headers: adminHeaders() })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setTelegramConfigured(data ? data.configured : null))
-      .catch(() => setTelegramConfigured(null));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchOrders]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Видалити це замовлення зі списку?")) return;
@@ -676,15 +662,6 @@ function OrdersTab() {
           </button>
         </div>
       </div>
-
-      {telegramConfigured === false && (
-        <p className="admin-orders__telegram-hint">
-          Сповіщення в Telegram про нові замовлення вимкнені. Щоб отримувати
-          їх у бот, задайте <code>TELEGRAM_BOT_TOKEN</code> і{" "}
-          <code>TELEGRAM_CHAT_ID</code> у <code>server/.env</code> (детальніше
-          в README).
-        </p>
-      )}
 
       {error && <p className="admin-page__server-error">{error}</p>}
       {loading && <p className="admin-list__empty">Завантажую…</p>}
@@ -885,7 +862,7 @@ function ReviewsTab() {
           {reviews.map((review) => (
             <li key={review.id} className="admin-list__item admin-reviews__item">
               {review.image && (
-                <img className="admin-reviews__thumb" src={review.image} alt="" />
+                <img className="admin-reviews__thumb" src={getImageUrl(review.image)} alt="" />
               )}
               <div>
                 <strong>{review.name}</strong>
